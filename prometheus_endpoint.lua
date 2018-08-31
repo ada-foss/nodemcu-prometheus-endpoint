@@ -4,9 +4,11 @@
 -- Berin Smaldon <noodels555@gmail.com>
 -------------------------------------------------------------------------------
 -- require metrics -> load metrics with callbacks for each metric
--- require('metrics')
+local metrics = require('metrics')
 
-require("http").createServer(555, function(req, res)
+print('loaded metric callbacks, building http server..')
+
+require('http_server').createServer(555, function(req, res)
     -- analyse method and url
     print('+R', req.method, req.url, node.heap())
 
@@ -31,6 +33,12 @@ require("http").createServer(555, function(req, res)
     -- end
 
     -- TODO: send metrics individually with res:send
+    res:send("# Hello, world!\n")
+    for name, callback in pairs(metrics) do
+        res:send(name..' '..callback().."\n")
+    end
     res:finish()
 
-end
+end )
+
+print('READY!')

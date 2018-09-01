@@ -2,55 +2,82 @@
 print('initializing experimental ADC..')
 
 local PIN_TRIGGER = 9
+local PIN_TEMP = 2
 local PIN_SENSOR = 1
 
 -- configure pins for the experimental ADC
 gpio.mode(PIN_SENSOR, gpio.INT, gpio.PULLUP)
 
 gpio.mode(PIN_TRIGGER, gpio.OUTPUT)
+gpio.mode(PIN_TEMP, gpio.OUTPUT)
 gpio.write(PIN_TRIGGER, gpio.HIGH)
+gpio.write(PIN_TEMP, gpio.LOW)
 
 print('- pins configured, building alarms')
 
 -- build alarms
+local reading_counter = 0
 local alarm_trigger_reading = tmr.create()
 local reading_timer_start
-local last_reading = 0
-local readings = { }
+local adc_last_reading = 0
+local temp_reading = 0
+local adc_readings = { }
 local reading_inhibit = true
+local adc_reading_count = 0
+local temp_reading_count = 0
 
 local function trigger_reading()
-    -- print('+A trigger!')
     reading_inhibit = false
-    reading_timer_start = tmr.now()
-    gpio.write(PIN_TRIGGER, gpio.LOW)
+    if reading_counter % 11 == 0 then
+        print('+A trigger!')
+        reading_timer_start = tmr.now()
+        gpio.write(PIN_TRIGGER, gpio.LOW)
+    else
+        print('+T trigger!')
+        reading_timer_start = tmr.now()
+        gpio.write(PIN_TEMP, gpio.HIGH)
+    end
 end
+
+local
 
 local function handle_reading(level, when)
     if not reading_inhibit then
         -- print('+A interrupt')
         reading_inhibit = true
         gpio.write(PIN_TRIGGER, gpio.HIGH)
+        gpio.write(PIN_TEMP, gpio.LOW)
 
-        last_reading = when - reading_timer_start
-        readings[#readings+1] = last_reading
-        if #readings > 10 then -- don't keep more than ten
-            table.remove(readings, 1)
+        if reading_counter % 11 == 0 then
+            temp_reading = when - reading_timer_start
+            reading_counter = 1
+            temp_reading_count = temp_reading_count + 1
+            print('+T '..temp_reading)
+        else
+            adc_last_reading = when - reading_timer_start
+            adc_readings[#adc_readings+1] = adc_last_reading
+            if #adc_readings > 10 then -- don't keep more than ten
+                table.remove(adc_readings, 1)
+            end
+            reading_counter = reading_counter + 1
+            adc_reading_count = adc_reading_count + 1
+            print('+A '..adc_last_reading)
         end
-        -- print('+A '..last_reading)
         alarm_trigger_reading:start()
     end
 end
 print('- setting pin interrupt')
 gpio.trig(PIN_SENSOR, "down", handle_reading)
 
+
+-- ADC accessor functions
 local function get_last_reading()
-    return last_reading
+    return adc_last_reading
 end
 
 local function get_mean_reading()
     local total = 0
-    for _, v in ipairs(readings) do
+    for _, v in ipairs(adc_readings) do
         total = total + v
     end
     return total / 10
@@ -66,13 +93,26 @@ local function get_sorted_copy(t)
 end
 
 local function get_low_reading()
-    local sorted = get_sorted_copy(readings)
+    local sorted = get_sorted_copy(adc_readings)
     return (sorted[2] or -1)
 end
 
 local function get_high_reading()
-    local sorted = get_sorted_copy(readings)
+    local sorted = get_sorted_copy(adc_readings)
     return (sorted[#sorted-1] or -1)
+end
+
+local function get_adc_reading_count()
+    return adc_reading_count
+end
+
+-- temperature sensor accessor functions
+local function get_last_temperature_reading()
+    return temp_reading
+end
+
+local function get_temperature_reading_count()
+    return temp_reading_count
 end
 
 alarm_trigger_reading:alarm(1000, tmr.ALARM_SEMI, trigger_reading)

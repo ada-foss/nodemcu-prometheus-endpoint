@@ -70,7 +70,9 @@ do
     c:send("0\r\n\r\n")
     -- close connection
     c:on('sent', function()
+        print('+C '..c:getpeer())
         c:close()
+        collectgarbage("collect")
     end )
   end
   --
@@ -98,6 +100,7 @@ do
       local buf = ""
       local method, url
       local ondisconnect = function(conn)
+        print('+D '..conn:getpeer().ip)
         collectgarbage("collect")
       end
       -- header parser

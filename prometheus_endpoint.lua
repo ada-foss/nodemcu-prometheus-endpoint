@@ -10,34 +10,7 @@ print('loaded metric callbacks, building http server..')
 
 require('http_server2').createServer(555, function(state)
     -- analyse method and url
-    print('+R', state.method, state.url, node.heap())
-
-    -- TODO: select handlers based on url?
-
-    -- setup handler for headers
-    -- req.onheader = function(self, name, value)
-    -- end
-
-    -- setup handler for body
-    -- commented out because prometheus endpoints don't care about the body(?)
-    -- req.ondata = function(self, chunk)
-    --     print("+B", chunk and #chunk, node.heap())
-    --     -- request ended?
-    --     if not chunk then
-    --         -- respond
-    --         res:send(nil, 200)
-    --         res:send_header('Connection', 'close')
-    --         res:send('Hello, world!')
-    --         res:finish()
-    --     end
-    -- end
-
-    -- TODO: send metrics individually with res:send
-    -- res:send("# Hello, world!\n")
-    -- for name, callback in pairs(metrics) do
-    --     res:send(name..' '..callback().."\n")
-    -- end
-    -- res:finish()
+    print('+R', state.method, state.url)
 
     -- defines callback to generate body
     local send_queue = { }

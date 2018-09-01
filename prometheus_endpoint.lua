@@ -12,6 +12,8 @@ require('http_server2').createServer(555, function(state)
     -- analyse method and url
     print('+R', state.method, state.url)
 
+    state.send_headers['content-type'] = 'text/plain; version=0.0.1; charset=utf-8'
+
     -- defines callback to generate body
     local send_queue = { }
 

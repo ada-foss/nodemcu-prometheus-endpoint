@@ -29,17 +29,17 @@ local temp_reading_count = 0
 local function trigger_reading()
     reading_inhibit = false
     if reading_counter % 11 == 0 then
-        print('+A trigger!')
-        reading_timer_start = tmr.now()
-        gpio.write(PIN_TRIGGER, gpio.LOW)
-    else
-        print('+T trigger!')
+        -- read temperature sensor occasionally
+        -- print('+T trigger!')
         reading_timer_start = tmr.now()
         gpio.write(PIN_TEMP, gpio.HIGH)
+    else
+        -- read ADC
+        -- print('+A trigger!')
+        reading_timer_start = tmr.now()
+        gpio.write(PIN_TRIGGER, gpio.LOW)
     end
 end
-
-local
 
 local function handle_reading(level, when)
     if not reading_inhibit then
@@ -52,7 +52,7 @@ local function handle_reading(level, when)
             temp_reading = when - reading_timer_start
             reading_counter = 1
             temp_reading_count = temp_reading_count + 1
-            print('+T '..temp_reading)
+            -- print('+T '..temp_reading)
         else
             adc_last_reading = when - reading_timer_start
             adc_readings[#adc_readings+1] = adc_last_reading
@@ -61,7 +61,7 @@ local function handle_reading(level, when)
             end
             reading_counter = reading_counter + 1
             adc_reading_count = adc_reading_count + 1
-            print('+A '..adc_last_reading)
+            -- print('+A '..adc_last_reading)
         end
         alarm_trigger_reading:start()
     end
@@ -124,4 +124,8 @@ adc.get_last_reading = get_last_reading
 adc.get_mean_reading = get_mean_reading
 adc.get_low_reading = get_low_reading
 adc.get_high_reading = get_high_reading
+adc.get_adc_reading_count = get_adc_reading_count
+
+adc.get_last_temperature_reading = get_last_temperature_reading
+adc.get_temperature_reading_count = get_temperature_reading_count
 return adc

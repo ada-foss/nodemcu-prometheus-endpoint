@@ -14,6 +14,6 @@ metrics.nodemcu_experimental_adc_reading_count = adc_experiment.get_adc_reading_
 
 -- temperature metrics
 metrics.nodemcu_experimental_temperature_reading_microseconds = adc_experiment.get_last_temperature_reading
-metrics.nodemcu_experimental_temperature_reading_count = adc_experiment.get_temp_reading_count
+metrics.nodemcu_experimental_temperature_reading_count = adc_experiment.get_temperature_reading_count
 
 return metrics

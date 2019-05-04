@@ -1,9 +1,9 @@
 
 print('initializing experimental ADC..')
 
-local PIN_TRIGGER = 9
-local PIN_TEMP = 2
-local PIN_SENSOR = 1
+local PIN_TRIGGER = 9 -- GPIO3, RX
+local PIN_TEMP = 2 -- GPIO4, D2
+local PIN_SENSOR = 1 -- GPIO5, D1
 
 -- configure pins for the experimental ADC
 gpio.mode(PIN_SENSOR, gpio.INT, gpio.PULLUP)

@@ -12,6 +12,12 @@ function flash(self)
     if flash_count == 0 then
         self:unregister()
         print('delay period expired, executing application.lua')
+
+        -- why is this required?
+        -- nobody knows
+        -- it seems to fix things
+        local t = require('ds18b20')
+
         dofile('application.lua')
     else
         flash_count = flash_count - 1

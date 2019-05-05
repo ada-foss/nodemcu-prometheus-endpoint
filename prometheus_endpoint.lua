@@ -8,7 +8,7 @@ local metrics = require('metrics')
 
 print('loaded metric callbacks, building http server..')
 
-require('http_server2').createServer(555, function(state)
+require('http_server').createServer(555, function(state)
     -- analyse method and url
     print('+R', state.method, state.url)
 

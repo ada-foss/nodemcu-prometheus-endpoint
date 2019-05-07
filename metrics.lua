@@ -1,10 +1,11 @@
 --local adc_experiment = require('adc_experiment')
 local temperature = require('temperature')
+local mcp3008 = require('mcp3008')
 local metrics = { }
 
-metrics.nodemcu_uptime_seconds = tmr.time
-metrics.nodemcu_received_signal_strength_indicator = wifi.sta.getrssi
-metrics.nodemcu_available_heap_bytes = node.heap
+metrics.uptime_seconds = tmr.time
+metrics.received_signal_strength_indicator = wifi.sta.getrssi
+metrics.available_heap_bytes = node.heap
 
 -- ADC metrics
 --metrics.nodemcu_experimental_adc_reading_microseconds = adc_experiment.get_last_reading
@@ -19,5 +20,11 @@ metrics.nodemcu_available_heap_bytes = node.heap
 
 -- ds18b20 metrics
 temperature.self_register(metrics)
+
+-- pin 1, GPIO5, D1
+local adc_pin = 1
+for i=0,7 do
+    metrics[('mcp3008_reading{chip="%s",pin="%s"}'):format(adc_pin, i)] = mcp3008.bind_to_adc(adc_pin, i)
+end
 
 return metrics

@@ -40,7 +40,7 @@ local function self_register(metrics)
           ensure_main_timer_running()
           return last_reading[addr]
       end
-      metrics['nodemcu_temperature_reading_celsius{address="'..s_addr..'"}'] = temp_sensor_x
+      metrics['temperature_reading_celsius{address="'..s_addr..'"}'] = temp_sensor_x
     end
 
     readout(temp)

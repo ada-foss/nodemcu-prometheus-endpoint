@@ -24,7 +24,7 @@ require('http_server').createServer(555, function(state)
     local function main_loop(connection)
         local k = table.remove(send_queue, 1)
         if k then
-            connection:send(k..' '..metrics[k]().."\n", main_loop)
+            connection:send('nodemcu_'..k..' '..metrics[k]().."\n", main_loop)
         else
             connection:close()
             collectgarbage()

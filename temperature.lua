@@ -50,7 +50,7 @@ local function self_register(metrics)
 end
 
 -- 3 = GPIO0, D3
-ds18b20:enable_debug()
+--ds18b20:enable_debug()
 main_timer:register(1000, tmr.ALARM_SEMI, refresh_readings)
 
 local temperature = { }

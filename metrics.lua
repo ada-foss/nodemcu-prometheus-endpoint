@@ -21,8 +21,8 @@ metrics.available_heap_bytes = node.heap
 -- ds18b20 metrics
 temperature.self_register(metrics)
 
--- pin 1, GPIO5, D1
-local adc_pin = 1
+-- pin 2, GPIO4, D2
+local adc_pin = 2
 for i=0,7 do
     metrics[('mcp3008_reading{chip="%s",pin="%s"}'):format(adc_pin, i)] = mcp3008.bind_to_adc(adc_pin, i)
 end

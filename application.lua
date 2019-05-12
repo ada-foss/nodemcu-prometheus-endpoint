@@ -1,8 +1,4 @@
-local SSID = 'ZyXEL_1395'
-local PASSWORD = 'PASSWORD_OMITTED'
-local STATIC_IP = '192.168.1.230'
-local STATIC_NETMASK = '255.255.255.0'
-local STATIC_GATEWAY = '192.168.1.1'
+local config = require('config')
 
 -- Define WiFi station event callbacks 
 wifi_connect_event = function(T) 
@@ -57,5 +53,5 @@ wifi.eventmon.register(wifi.eventmon.STA_DISCONNECTED, wifi_disconnect_event)
 
 print('initiating wifi connection')
 wifi.setmode(wifi.STATION)
-wifi.sta.setip({ip = STATIC_IP, netmask = STATIC_NETMASK, gateway = STATIC_GATEWAY})
-wifi.sta.config({ssid=SSID, pwd=PASSWORD})
+wifi.sta.setip({ip = config.static_ip, netmask = config.static_netmask, gateway = config.static_gateway})
+wifi.sta.config({ssid=config.ssid, pwd=config.password})

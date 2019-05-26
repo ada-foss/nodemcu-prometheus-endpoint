@@ -7,11 +7,9 @@
 local metrics = require('metrics')
 
 print('loaded metric callbacks, building http server..')
+collectgarbage()
 
-require('http_server').createServer(555, function(state)
-    -- analyse method and url
-    print('+R', state.method, state.url)
-
+local get_metrics = function(state)
     state.send_headers['content-type'] = 'text/plain; version=0.0.1; charset=utf-8'
 
     -- defines callback to generate body
@@ -32,6 +30,42 @@ require('http_server').createServer(555, function(state)
     end
 
     return main_loop
+end
+
+local put_sreg = function(state)
+    print('START DATA')
+    print(state.buffer)
+    print('END DATA')
+
+    return function(connection)
+        connection:close()
+        collectgarbage()
+    end
+end
+
+local give_404 = function(state)
+    state.response_code = 404
+    state.response = 'Not Found'
+
+    return function(connection)
+        connection:close()
+        collectgarbage()
+    end
+end
+
+local uris = {
+    metrics = get_metrics,
+    sreg = put_sreg
+}
+print(node.heap())
+
+require('http_server').createServer(555, function(state)
+    -- analyse method and url
+    print('+R', state.method, state.url)
+
+    local _, _, uri_key = state.url:find('^/([^/]+)')
+    local to_call = uris[uri_key] or give_404
+    return to_call(state)
 end )
 
 print('READY!')

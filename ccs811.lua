@@ -53,10 +53,6 @@ ccs811.read_error_id = function()
     return cache.error_id
 end
 
-ccs811.read_true_status = function()
-    return i2c_read_reg(90, 0x00, 1):byte(0,1)
-end
-
 ccs811.read_meas_mode = function()
     return i2c_read_reg(90, 0x01, 1):byte(0,1)
 end
@@ -85,7 +81,7 @@ else
     -- measurement mode register
     i2c.start(0)
     i2c.address(0, 90, i2c.TRANSMITTER)
-    i2c.write(0, 0x01, 0x20)
+    i2c.write(0, 0x01, 0x10)
     i2c.stop(0)
 
     -- re-read status

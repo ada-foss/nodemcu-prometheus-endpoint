@@ -18,7 +18,7 @@ function flash(self)
         -- it seems to fix things
         local t = require('ds18b20')
 
-        dofile('application.lua')
+        dofile('application.lc')
     else
         flash_count = flash_count - 1
         self:start()

@@ -11,7 +11,7 @@ wifi_got_ip_event = function(T)
   -- Note: Having an IP address does not mean there is internet access!
   -- Internet connectivity can be determined with net.dns.resolve().    
   print("Wifi connection is ready! IP address is: "..T.IP)
-  dofile('prometheus_endpoint.lua')
+  dofile('prometheus_endpoint.lc')
 end
 
 wifi_disconnect_event = function(T)

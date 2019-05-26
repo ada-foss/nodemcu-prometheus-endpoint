@@ -8,14 +8,10 @@ do
     i2c.setup(0, 2, 1, i2c.SLOW)
 end
 
-print('before loading any modules:', node.heap())
 local temperature = require('temperature')
-print('after temperature:', node.heap())
 local mcp3008 = require('mcp3008')
 --local bme280_binding = require('bme280_binding')
-print('after mcp3008:', node.heap())
 local ccs811 = require('ccs811')
-print('after ccs811:', node.heap())
 local metrics = { }
 
 metrics.uptime_seconds = tmr.time

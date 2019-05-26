@@ -1,10 +1,7 @@
 local CRLF = "\r\n"
 
-print(node.heap())
-
 local http = { }
 do
-    print(node.heap())
     -- received header callbacks
     http.recv_header_callbacks = { }
 
@@ -30,7 +27,6 @@ do
         connection:send(header..CRLF, sent_callback)
     end
 
-    print(node.heap())
     -- receive handler
     local receive = function(connection, state)
         if state.awaiting_bytes > 0 then
@@ -79,7 +75,6 @@ do
             nl_index = state.buffer:find("\r\n")
         end
     end
-    print(node.heap())
 
     -- HTTP parser
     local http_handler = function(handler)
@@ -99,7 +94,6 @@ do
             conn:on('disconnection', ondisconnect)
         end
     end
-    print(node.heap())
 
     -- HTTP server
     local srv

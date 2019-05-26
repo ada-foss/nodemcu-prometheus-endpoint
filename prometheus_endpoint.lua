@@ -57,7 +57,6 @@ local uris = {
     metrics = get_metrics,
     sreg = put_sreg
 }
-print(node.heap())
 
 require('http_server').createServer(555, function(state)
     -- analyse method and url

@@ -1,0 +1,5 @@
+GET /metrics HTTP/1.1
+Host: localhost:9100
+User-Agent: netcat/0.0001
+Accept: */*
+

@@ -1,0 +1,4 @@
+config.lua
+*.lc
+.*.swp
+__pycache__

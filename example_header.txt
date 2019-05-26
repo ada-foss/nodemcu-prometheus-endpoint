@@ -1,0 +1,13 @@
+noodels@compression:~/project/nodemcu/prometheus-endpoint$ nc localhost 9100 < test_header.txt | head -n 20
+HTTP/1.1 200 OK
+Content-Length: 51855
+Content-Type: text/plain; version=0.0.4; charset=utf-8
+Date: Fri, 31 Aug 2018 06:05:25 GMT
+
+# HELP go_gc_duration_seconds A summary of the GC invocation durations.
+# TYPE go_gc_duration_seconds summary
+go_gc_duration_seconds{quantile="0"} 4.2493e-05
+go_gc_duration_seconds{quantile="0.25"} 7.6318e-05
+go_gc_duration_seconds{quantile="0.5"} 0.000104496
+go_gc_duration_seconds{quantile="0.75"} 0.000183101
+go_gc_duration_seconds{quantile="1"} 0.005664741

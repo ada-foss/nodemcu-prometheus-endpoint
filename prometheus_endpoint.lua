@@ -5,6 +5,7 @@
 -------------------------------------------------------------------------------
 -- require metrics -> load metrics with callbacks for each metric
 local metrics = require('metrics')
+local shift_register = require('shift_register')
 
 print('loaded metric callbacks, building http server..')
 collectgarbage()
@@ -33,9 +34,24 @@ local get_metrics = function(state)
 end
 
 local put_sreg = function(state)
-    print('START DATA')
-    print(state.buffer)
-    print('END DATA')
+    local i, _, f, pin_s, level_s, duration_s = state.buffer:find('^(%a)%a+ (%d+) (%d) *(%d*)')
+
+    local pin = tonumber(pin_s)
+    local duration = tonumber(duration_s)
+    local level = tonumber(level_s)
+
+    --print('pulse:', pin, duration, level)
+    if level == nil or level < 0 or level > 1 or (f == 'p' and duration == nil) then
+        state.response_code = 400
+        state.response = 'Bad Request'
+    end
+
+    if f == 'p' then
+        shift_register.pulse(pin, duration, level)
+    else
+        print('+S', 'set', pin, level)
+        shift_register.set(pin, level)
+    end
 
     return function(connection)
         connection:close()

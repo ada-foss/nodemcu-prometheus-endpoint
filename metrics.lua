@@ -10,8 +10,8 @@ end
 
 local temperature = require('temperature')
 local mcp3008 = require('mcp3008')
---local bme280_binding = require('bme280_binding')
-local ccs811 = require('ccs811')
+local bme280_binding = require('bme280_binding')
+--local ccs811 = require('ccs811')
 local metrics = { }
 
 metrics.uptime_seconds = tmr.time
@@ -29,12 +29,12 @@ for i=0,7 do
     metrics[('mcp3008_reading{chip="%s",pin="%s"}'):format(adc_pin, i)] = mcp3008.bind_to_adc(adc_pin, i)
 end
 
---metrics.bme280_temperature_celsius = bme280_binding.temperature
---metrics.bme280_pressure_hectopascals = bme280_binding.pressure
---metrics.bme280_humidity_percentage = bme280_binding.humidity
+metrics.bme280_temperature_celsius = bme280_binding.temperature
+metrics.bme280_pressure_hectopascals = bme280_binding.pressure
+metrics.bme280_humidity_percentage = bme280_binding.humidity
 
-metrics.ccs811_co2_ppm = ccs811.read_co2
-metrics.ccs811_tvoc_ppb = ccs811.read_tvoc
-metrics.ccs811_status = ccs811.read_status
+--metrics.ccs811_co2_ppm = ccs811.read_co2
+--metrics.ccs811_tvoc_ppb = ccs811.read_tvoc
+--metrics.ccs811_status = ccs811.read_status
 
 return metrics

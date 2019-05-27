@@ -27,3 +27,17 @@ end
 
 gpio.mode(LED_PIN, gpio.OUTPUT)
 local tmr_on = tmr.create():alarm(250, tmr.ALARM_SEMI, flash)
+
+do
+    local SPI_CLOCKDIV = 80
+
+    local spi = require('spi')
+    local _, config = pcall(require, 'config')
+
+    gpio.mode(config.shift_register_rclk, gpio.OUTPUT)
+    gpio.write(config.shift_register_rclk, gpio.LOW)
+    spi.setup(1, spi.MASTER, spi.CPOL_LOW, spi.CPHA_LOW, 10, SPI_CLOCKDIV, spi.FULLDUPLEX)
+    spi.send(1, config.shift_register or {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0})
+    gpio.write(config.shift_register_rclk, gpio.HIGH)
+    gpio.write(config.shift_register_rclk, gpio.LOW)
+end

@@ -28,7 +28,7 @@ local READ_SCRATCHPAD = 0xBE
 local READ_POWERSUPPLY= 0xB4
 local MODE = 1
 
-local pin, cb, unit = 3
+local pin, cb = 3
 local status = {}
 
 local debugPrint = function() return end
@@ -68,40 +68,15 @@ local function readout(self)
       t = ((t <= 32767) and t or t - 65536) *
           ((addr:byte(1) == DS18B20FAMILY) and 625 or 5000)
 
-      if 1/2 == 0 then
-        -- integer version
-        if unit == 'F' then
-          t = (t * 18)/10 + 320000
-        elseif unit == 'K' then
-          t = t + 2731500
-        end
-        local sgn = t<0 and -1 or 1
-        local tA = sgn*t
-        local tH=tA/10000
-        local tL=(tA%10000)/1000 + ((tA%1000)/100 >= 5 and 1 or 0)
-
-        if tH and (t~=850000) then
-          temp[addr]=(sgn<0 and "-" or "")..tH.."."..tL
-          debugPrint(to_string(addr),(sgn<0 and "-" or "")..tH.."."..tL)
-          status[i] = 2
-        end
-        -- end integer version
-      else
-        -- float version
-        if t and (math_floor(t/10000)~=85) then
-          t = t / 10000
-          if unit == 'F' then
-            t = t * 18/10 + 32
-          elseif unit == 'K' then
-            t = t + 27315/100
-          end
-          self.temp[addr]=t
-          debugPrint(to_string(addr), t)
-          status[i] = 2
-        end
-        -- end float version
+      -- float version
+      if t and (math_floor(t/10000)~=85) then
+        t = t / 10000
+        self.temp[addr]=t
+        debugPrint(to_string(addr), t)
+        status[i] = 2
       end
-    end
+      -- end float version
+      end
     next = next or status[i] == 0
   end
   if next then
@@ -140,7 +115,7 @@ local function conversion(self)
   tmr_create():alarm(750, tmr_ALARM_SINGLE, function() return readout(self) end)
 end
 
-local function _search(self, lcb, lpin, search, save)
+local function _search(self, lcb, lpin, search)
   self.temp = {}
   if search then self.sens = {}; status = {} end
   local temp = self.temp
@@ -148,15 +123,6 @@ local function _search(self, lcb, lpin, search, save)
   pin = lpin or pin
 
   local addr
-  if not search and #sens == 0 then
-    -- load addreses if available
-    debugPrint ("geting addreses from flash")
-    local s,check,a = pcall(dofile, "ds18b20_save.lc")
-    if s and check == "ds18b20" then
-      for i = 1, #a do sens[i] = a[i] end
-    end
-    debugPrint (#sens, "addreses found")
-  end
 
   ow_setup(pin)
   if search or #sens == 0 then
@@ -185,38 +151,22 @@ local function _search(self, lcb, lpin, search, save)
       ow_depower(pin)
       -- place powered sensors first
       table_sort(sens, function(a, b) return a:byte(9)<b:byte(9) end) -- parasite
-      -- save sensor addreses
-      if save then
-        debugPrint ("saving addreses to flash")
 
-        local addr_list = {}
-        for i =1, #sens do
-          local s = sens[i]
-          addr_list[i] = to_string(s:sub(1,8), true)..('.."\\%u"'):format(s:byte(9))
-        end
-        local save_statement = 'return "ds18b20", {' .. table_concat(addr_list, ',') .. '}'
-        debugPrint (save_statement)
-        local save_file = file_open("ds18b20_save.lc","w")
-        save_file:write(string_dump(loadstring(save_statement)))
-        save_file:close()
-      end
-      -- end save sensor addreses
       if lcb then node_task_post(node_task_LOW_PRIORITY, lcb) end
     end
   end
   cycle()
 end
 
-local function read_temp(self, lcb, lpin, lunit, force_search, save_search)
-  cb, unit = lcb, lunit or unit
-  _search(self, function() return conversion(self) end, lpin, force_search, save_search)
+local function read_temp(self, lcb, lpin, force_search)
+  cb = lcb
+  _search(self, function() return conversion(self) end, lpin, force_search)
 end
 
  -- Set module name as parameter of require and return module table
 local M = {
   sens = {},
   temp = {},
-  C = 'C', F = 'F', K = 'K',
   read_temp = read_temp, enable_debug = enable_debug
 }
 _G[modname or 'ds18b20'] = M

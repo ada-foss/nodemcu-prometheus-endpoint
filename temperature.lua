@@ -23,13 +23,13 @@ end
 local function self_register(metrics)
 
   local function first_readout(temp)
-    print('ds18b20 bus scan complete:')
+    --print('ds18b20 bus scan complete:')
 
-    print("  total number of DS18B20 sensors: ".. #ds18b20.sens)
-    for i, s in ipairs(ds18b20.sens) do
-      local s_addr = ('%02X:%02X:%02X:%02X:%02X:%02X:%02X:%02X'):format(s:byte(1,8))
-      print(string.format("  sensor #%d address: %s%s",  i, s_addr, s:byte(9) == 1 and " (parasite)" or ""))
-    end
+    --print("  total number of DS18B20 sensors: ".. #ds18b20.sens)
+    --for i, s in ipairs(ds18b20.sens) do
+      --local s_addr = ('%02X:%02X:%02X:%02X:%02X:%02X:%02X:%02X'):format(s:byte(1,8))
+      --print(string.format("  sensor #%d address: %s%s",  i, s_addr, s:byte(9) == 1 and " (parasite)" or ""))
+    --end
 
     print('first ds18b20 readings:')
     for addr, temp in pairs(temp) do

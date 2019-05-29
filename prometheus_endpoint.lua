@@ -20,6 +20,8 @@ local get_metrics = function(state)
         send_queue[#send_queue+1] = k
     end
 
+    table.sort(send_queue)
+
     local function main_loop(connection)
         local k = table.remove(send_queue, 1)
         if k then
@@ -41,12 +43,11 @@ local put_sreg = function(state)
     local level = tonumber(level_s)
 
     --print('pulse:', pin, duration, level)
-    if level == nil or level < 0 or level > 1 or (f == 'p' and duration == nil) then
+    if not level or level < 0 or level > 1 or (f == 'p' and duration == nil) then
         state.response_code = 400
         state.response = 'Bad Request'
-    end
 
-    if f == 'p' then
+    elseif f == 'p' then
         shift_register.pulse(pin, duration, level)
     else
         print('+S', 'set', pin, level)
